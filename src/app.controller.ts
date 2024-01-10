@@ -12,6 +12,7 @@ export class AppController {
 
   @Post()
   kakaoChat(@Body() body) {
+    console.log(body);
     const msg = body.userRequest.utterance.replace('\n', '');
     return this.appService.createGptMessage(msg);
   }
