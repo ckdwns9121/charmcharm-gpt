@@ -129,6 +129,8 @@ export class AppService {
   }
 
   async createAnwser(content: string, user_id: string) {
+    return this.kakao_response_text('zz');
+
     try {
       // 유저 응답 상태 가져오기
       const userInfo = await this.client.get(`${user_id}-response`);
