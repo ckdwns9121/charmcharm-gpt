@@ -28,6 +28,7 @@ export class AppController {
         ],
       },
     };
+    console.log('hello');
     return responseBody;
     // return this.appService.createAnwser(msg, user_id);
   }
