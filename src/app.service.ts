@@ -92,8 +92,11 @@ export class AppService {
     try {
       let gpt_message = null;
 
+      const user_state = await this.client.get(`${user_id}-response`);
+      if (user_state === 'INIT') {
+        await this.client.set(`${user_id}-response`, 'RUNNING');
+      }
       // 유저의 응답 상태 RUNNING
-      this.client.set(`${user_id}-response`, 'RUNNING');
       const response = await this.openai.chat.completions.create({
         model: 'gpt-3.5-turbo-1106',
         messages: messages,
@@ -151,11 +154,12 @@ export class AppService {
       if (user_response === 'RUNNING') {
         return this.kakao_response_text('답장 준비중');
       } else if (user_response === 'INIT') {
-        return this.kakao_response_text('질문을 입력해주세요');
+        return this.kakao_response_text('답장 준비중2');
       } else {
         const gpt_message = await this.client.get(`${user_id}-response`);
         console.log('-------gpt messages--------');
         console.log(gpt_message);
+        this.client.set(`${user_id}-response`, 'INIT');
         return this.kakao_response_text(gpt_message);
       }
     } catch (e) {
