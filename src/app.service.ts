@@ -128,38 +128,7 @@ export class AppService {
     }
   }
 
-  test(content: string) {
-    const responseBody = {
-      version: '2.0',
-      template: {
-        outputs: [
-          {
-            simpleText: {
-              text: 'hello',
-            },
-          },
-        ],
-      },
-    };
-    return responseBody;
-  }
-
   async createAnwser(content: string, user_id: string) {
-    const responseBody = {
-      version: '2.0',
-      template: {
-        outputs: [
-          {
-            simpleText: {
-              text: "hello I'm Ryan",
-            },
-          },
-        ],
-      },
-    };
-
-    return responseBody;
-
     try {
       // 유저 응답 상태 가져오기
       const userInfo = await this.client.get(`${user_id}-response`);
