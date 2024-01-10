@@ -34,6 +34,7 @@ export class AppService {
         presence_penalty: 0,
       });
       const prompt = response.choices[0].message.content;
+      console.log(response);
       console.log('create prompt');
       const res = {
         version: '2.0',
