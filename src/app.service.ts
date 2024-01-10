@@ -76,7 +76,10 @@ export class AppService {
       parseMessage.push({ role: 'user', content: text });
 
       console.log(`set ${user_id} messages`);
-      await this.client.set(`${user_id}-messages`, parseMessage);
+      await this.client.set(
+        `${user_id}-messages`,
+        JSON.stringify(parseMessage),
+      );
       console.log(parseMessage);
       return parseMessage;
     } catch (e) {
@@ -115,7 +118,7 @@ export class AppService {
       this.client.set(`${user_id}-response`, gpt_message);
 
       // 기존 메시지에 새로운 메시지 넣기
-      this.client.set(`${user_id}-messages`, newMessages);
+      this.client.set(`${user_id}-messages`, JSON.stringify(newMessages));
     } catch (e) {
       console.log('run gpt error');
       console.log(e);
