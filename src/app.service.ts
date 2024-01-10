@@ -68,81 +68,96 @@ export class AppService {
   }
 
   async updateMessage(user_id: string, text: string) {
-    console.log(`get ${user_id} messages`);
+    try {
+      console.log(`get ${user_id} messages`);
 
-    const message = await this.client.get(`${user_id}-messages`);
-    const parseMessage = JSON.parse(message);
-    parseMessage.push({ role: 'user', content: text });
+      const message = await this.client.get(`${user_id}-messages`);
+      const parseMessage = JSON.parse(message);
+      parseMessage.push({ role: 'user', content: text });
 
-    console.log(`set ${user_id} messages`);
-    await this.client.set(`${user_id}-messages`, parseMessage);
-    console.log(parseMessage);
-    return parseMessage;
+      console.log(`set ${user_id} messages`);
+      await this.client.set(`${user_id}-messages`, parseMessage);
+      console.log(parseMessage);
+      return parseMessage;
+    } catch (e) {
+      console.log('update message error');
+      console.log(e);
+    }
   }
 
   async runGpt(messages: any, user_id: string) {
-    let gpt_message = null;
+    try {
+      let gpt_message = null;
 
-    // 유저의 응답 상태 RUNNING
-    this.client.set(`${user_id}-response`, 'RUNNING');
-    const response = await this.openai.chat.completions.create({
-      model: 'gpt-3.5-turbo-1106',
-      messages: messages,
-      temperature: 1,
-      max_tokens: NUM_MAX_TOKEN,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
+      // 유저의 응답 상태 RUNNING
+      this.client.set(`${user_id}-response`, 'RUNNING');
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo-1106',
+        messages: messages,
+        temperature: 1,
+        max_tokens: NUM_MAX_TOKEN,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
 
-    // 메시지 응답
-    gpt_message = response.choices[0].message.content;
+      // 메시지 응답
+      gpt_message = response.choices[0].message.content;
 
-    // 기존 메시지 가져오기
-    const messages_redis = await this.client.get(`${user_id}-messages`);
+      // 기존 메시지 가져오기
+      const messages_redis = await this.client.get(`${user_id}-messages`);
 
-    // 새로운 응답 추가
-    const newMessages = JSON.parse(messages_redis);
-    newMessages.push({ role: 'user', content: gpt_message });
+      // 새로운 응답 추가
+      const newMessages = JSON.parse(messages_redis);
+      newMessages.push({ role: 'user', content: gpt_message });
 
-    // GPT 응답상태에 메시지 넣기
-    this.client.set(`${user_id}-response`, gpt_message);
+      // GPT 응답상태에 메시지 넣기
+      this.client.set(`${user_id}-response`, gpt_message);
 
-    // 기존 메시지에 새로운 메시지 넣기
-    this.client.set(`${user_id}-messages`, newMessages);
+      // 기존 메시지에 새로운 메시지 넣기
+      this.client.set(`${user_id}-messages`, newMessages);
+    } catch (e) {
+      console.log('run gpt error');
+      console.log(e);
+    }
   }
 
   async createAnwser(content: string, user_id: string) {
-    // 유저 응답 상태 가져오기
-    const userInfo = await this.client.get(`${user_id}-response`);
+    try {
+      // 유저 응답 상태 가져오기
+      const userInfo = await this.client.get(`${user_id}-response`);
 
-    // 유저 응답 상태 없으면 초기화
-    if (!userInfo) {
-      console.log('none user init');
-      this.client.set(`${user_id}-response`, 'INIT');
+      // 유저 응답 상태 없으면 초기화
+      if (!userInfo) {
+        console.log('none user init');
+        this.client.set(`${user_id}-response`, 'INIT');
 
-      // GPT 시스템 셋팅
-      console.log('system message setting');
-      await this.initUserMessage(user_id);
-    }
+        // GPT 시스템 셋팅
+        console.log('system message setting');
+        await this.initUserMessage(user_id);
+      }
 
-    // 유저 응답 설정
-    const messages = await this.updateMessage(user_id, content);
+      // 유저 응답 설정
+      const messages = await this.updateMessage(user_id, content);
 
-    this.runGpt(messages, user_id);
+      this.runGpt(messages, user_id);
 
-    const user_response = await this.client.get(`${user_id}-response`);
-    console.log('---------user response------');
-    console.log(user_response);
-    if (user_response === 'RUNNING') {
-      return this.kakao_response_button();
-    } else if (user_response === 'INIT') {
-      return this.kakao_response_text('질문을 입력해주세요');
-    } else {
-      const gpt_message = await this.client.get(`${user_id}-response`);
-      console.log('-------gpt messages--------');
-      console.log(gpt_message);
-      return this.kakao_response_text(gpt_message);
+      const user_response = await this.client.get(`${user_id}-response`);
+      console.log('---------user response------');
+      console.log(user_response);
+      if (user_response === 'RUNNING') {
+        return this.kakao_response_button();
+      } else if (user_response === 'INIT') {
+        return this.kakao_response_text('질문을 입력해주세요');
+      } else {
+        const gpt_message = await this.client.get(`${user_id}-response`);
+        console.log('-------gpt messages--------');
+        console.log(gpt_message);
+        return this.kakao_response_text(gpt_message);
+      }
+    } catch (e) {
+      console.log('createAnwser error');
+      console.log(e);
     }
   }
 
