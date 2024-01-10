@@ -13,9 +13,9 @@ export class AppController {
 
   @Post()
   chatGpt(@Body() body, @Res() res: Response) {
-    const user_id = body.userRequest.user.id;
-    const msg = body.userRequest.utterance.replace('\n', '');
-    console.log(msg);
+    // const user_id = body.userRequest.user.id;
+    // const msg = body.userRequest.utterance.replace('\n', '');
+    // console.log(msg);
     const responseBody = {
       version: '2.0',
       template: {
@@ -29,6 +29,6 @@ export class AppController {
       },
     };
     return responseBody;
-    return this.appService.createAnwser(msg, user_id);
+    // return this.appService.createAnwser(msg, user_id);
   }
 }
