@@ -123,48 +123,79 @@ export class AppService {
     }
   }
 
-  async createAnwser(content: string, user_id: string) {
+  async asyncFunction() {
+    // 여기에 비동기 작업을 구현하세요.
+  }
+
+  timeoutPromise(timeout) {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  }
+
+  async getResponse(): Promise<string> {
     try {
-      // 유저 응답 상태 가져오기
-      const userInfo = await this.client.get(`${user_id}-response`);
-
-      // 유저 응답 상태 없으면 초기화
-      if (!userInfo) {
-        console.log('none user init');
-        await this.client.set(`${user_id}-response`, 'INIT');
-
-        // GPT 시스템 셋팅
-        console.log('system message setting');
-        await this.initUserMessage(user_id);
-      }
-
-      // 유저 응답 설정
-      const messages = await this.updateMessage(user_id, content);
-
-      const user_state = await this.client.get(`${user_id}-response`);
-      if (user_state === 'INIT') {
-        console.log('start running');
-        await this.client.set(`${user_id}-response`, 'RUNNING');
-      }
-      this.runGpt(messages, user_id);
-
-      const user_response = await this.client.get(`${user_id}-response`);
-      console.log('---------user response------');
-      console.log(user_response);
-      if (user_response === 'RUNNING') {
-        return this.kakao_response_button();
-      } else if (user_response === 'INIT') {
-        return this.kakao_response_text('답장 준비중2');
-      } else {
-        const gpt_message = await this.client.get(`${user_id}-response`);
-        console.log('-------gpt messages--------');
-        await this.client.set(`${user_id}-response`, 'INIT');
-        return this.kakao_response_text(gpt_message);
-      }
-    } catch (e) {
-      console.log('createAnwser error');
-      console.log(e);
+      await Promise.race([
+        this.runGpt('param1', 'param2'),
+        new Promise((resolve, reject) =>
+          setTimeout(() => reject(new Error('timeout')), 5000),
+        ),
+      ]);
+      return 'start';
+    } catch (error) {
+      return 'end';
     }
+  }
+  async createAnwser(content: string, user_id: string) {
+    // 유저 응답 상태 가져오기
+    const userInfo = await this.client.get(`${user_id}-response`);
+
+    // 유저 응답 상태 없으면 초기화
+    if (!userInfo) {
+      console.log('none user init');
+      await this.client.set(`${user_id}-response`, 'INIT');
+
+      // GPT 시스템 셋팅
+      console.log('system message setting');
+      await this.initUserMessage(user_id);
+    }
+
+    try {
+      const messages = await this.updateMessage(user_id, content);
+      await Promise.race([
+        this.runGpt(messages, user_id),
+        new Promise((resolve, reject) =>
+          setTimeout(() => reject(new Error('timeout')), 4500),
+        ),
+      ]);
+      const gpt_message = await this.client.get(`${user_id}-response`);
+      console.log('-------gpt messages--------');
+      await this.client.set(`${user_id}-response`, 'INIT');
+      return this.kakao_response_text(gpt_message);
+    } catch (error) {
+      return this.kakao_response_button();
+    }
+
+    // // 유저 응답 설정
+    // const messages = await this.updateMessage(user_id, content);
+
+    // const user_state = await this.client.get(`${user_id}-response`);
+    // if (user_state === 'INIT') {
+    //   console.log('start running');
+    //   await this.client.set(`${user_id}-response`, 'RUNNING');
+    // }
+
+    // const user_response = await this.client.get(`${user_id}-response`);
+    // console.log('---------user response------');
+    // console.log(user_response);
+    // if (user_response === 'RUNNING') {
+    //   return this.kakao_response_button();
+    // } else if (user_response === 'INIT') {
+    //   return this.kakao_response_text('답장 준비중2');
+    // } else {
+    //   const gpt_message = await this.client.get(`${user_id}-response`);
+    //   console.log('-------gpt messages--------');
+    //   await this.client.set(`${user_id}-response`, 'INIT');
+    //   return this.kakao_response_text(gpt_message);
+    // }
   }
 
   getHello(): string {
