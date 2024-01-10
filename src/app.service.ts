@@ -152,7 +152,7 @@ export class AppService {
       console.log('---------user response------');
       console.log(user_response);
       if (user_response === 'RUNNING') {
-        return this.kakao_response_text('답장 준비중');
+        return this.kakao_response_button();
       } else if (user_response === 'INIT') {
         return this.kakao_response_text('답장 준비중2');
       } else {
