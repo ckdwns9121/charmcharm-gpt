@@ -12,7 +12,7 @@ export class AppController {
 
   @Post()
   kakaoChat(@Body() body) {
-    const { content } = body;
-    return this.appService.createGptMessage(content);
+    console.log(body);
+    return this.appService.createGptMessage('');
   }
 }
