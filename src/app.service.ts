@@ -13,7 +13,7 @@ export class AppService {
 
   async createGptMessage(content: string) {
     try {
-      console.log('요청 시작');
+      console.log('start');
       const response = await this.openai.chat.completions.create({
         model: 'gpt-3.5-turbo-1106',
         messages: [
@@ -55,7 +55,8 @@ export class AppService {
       console.log(prompt);
       return prompt;
     } catch (e) {
-      console.log('에러에러');
+      console.log('error');
+      console.log(e);
     }
   }
 
