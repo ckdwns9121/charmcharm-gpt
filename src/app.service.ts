@@ -129,19 +129,20 @@ export class AppService {
   }
 
   async createAnwser(content: string, user_id: string) {
-    const res = {
+    const responseBody = {
       version: '2.0',
       template: {
         outputs: [
           {
             simpleText: {
-              text: content,
+              text: "hello I'm Ryan",
             },
           },
         ],
       },
     };
-    return res;
+
+    return responseBody;
 
     try {
       // 유저 응답 상태 가져오기
