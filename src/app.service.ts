@@ -129,7 +129,19 @@ export class AppService {
   }
 
   async createAnwser(content: string, user_id: string) {
-    return this.kakao_response_text('zz');
+    const res = {
+      version: '2.0',
+      template: {
+        outputs: [
+          {
+            simpleText: {
+              text: content,
+            },
+          },
+        ],
+      },
+    };
+    return res;
 
     try {
       // 유저 응답 상태 가져오기
