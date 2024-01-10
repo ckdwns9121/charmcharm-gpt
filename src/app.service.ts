@@ -161,6 +161,8 @@ export class AppService {
       const state = await this.client.get(`${user_id}-response`);
       if (state === 'RUNNING') {
         return this.kakao_response_button();
+      } else if (state === 'INIT') {
+        return this.kakao_response_button();
       } else {
         return this.kakao_response_text(state);
       }
