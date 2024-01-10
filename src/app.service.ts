@@ -128,6 +128,22 @@ export class AppService {
     }
   }
 
+  test(content: string) {
+    const responseBody = {
+      version: '2.0',
+      template: {
+        outputs: [
+          {
+            simpleText: {
+              text: 'hello',
+            },
+          },
+        ],
+      },
+    };
+    return responseBody;
+  }
+
   async createAnwser(content: string, user_id: string) {
     const responseBody = {
       version: '2.0',
