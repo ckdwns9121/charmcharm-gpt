@@ -183,29 +183,6 @@ export class AppService {
     } catch (error) {
       return this.kakao_response_button();
     }
-
-    // // 유저 응답 설정
-    // const messages = await this.updateMessage(user_id, content);
-
-    // const user_state = await this.client.get(`${user_id}-response`);
-    // if (user_state === 'INIT') {
-    //   console.log('start running');
-    //   await this.client.set(`${user_id}-response`, 'RUNNING');
-    // }
-
-    // const user_response = await this.client.get(`${user_id}-response`);
-    // console.log('---------user response------');
-    // console.log(user_response);
-    // if (user_response === 'RUNNING') {
-    //   return this.kakao_response_button();
-    // } else if (user_response === 'INIT') {
-    //   return this.kakao_response_text('답장 준비중2');
-    // } else {
-    //   const gpt_message = await this.client.get(`${user_id}-response`);
-    //   console.log('-------gpt messages--------');
-    //   await this.client.set(`${user_id}-response`, 'INIT');
-    //   return this.kakao_response_text(gpt_message);
-    // }
   }
 
   getHello(): string {
