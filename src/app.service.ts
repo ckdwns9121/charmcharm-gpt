@@ -157,7 +157,7 @@ export class AppService {
       console.log('system message setting');
       await this.initUserMessage(user_id);
     }
-    if (content === '답변 확인하기') {
+    if (content === '답변 확인 하기') {
       const state = await this.client.get(`${user_id}-response`);
       if (state === 'RUNNING') {
         return this.kakao_response_button();
