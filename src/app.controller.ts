@@ -12,21 +12,9 @@ export class AppController {
   }
 
   @Post()
-  kakaoChat(@Body() body, @Res() res: Response) {
-    const middleRes = {
-      version: '2.0',
-      template: {
-        outputs: [
-          {
-            simpleText: {
-              text: '답변 생성중',
-            },
-          },
-        ],
-      },
-    };
-    res.status(200).send(middleRes);
+  chatGpt(@Body() body, @Res() res: Response) {
+    const user_id = body.userRequest.user.id;
     const msg = body.userRequest.utterance.replace('\n', '');
-    return this.appService.createGptMessage(msg);
+    return this.appService.createAnwser(msg, user_id);
   }
 }
