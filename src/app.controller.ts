@@ -12,7 +12,7 @@ export class AppController {
   }
 
   @Post()
-  chatGpt(@Body() body, @Res() res: Response) {
+  chatGpt(@Body() body) {
     // const user_id = body.userRequest.user.id;
     // const msg = body.userRequest.utterance.replace('\n', '');
     // console.log(msg);
