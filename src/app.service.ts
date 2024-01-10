@@ -69,7 +69,7 @@ export class AppService {
     );
   }
 
-  async updateMessage(user_id: string, text: string) {
+  async updateUserMessage(user_id: string, text: string) {
     try {
       console.log(`get ${user_id} messages`);
 
@@ -112,7 +112,7 @@ export class AppService {
 
       // 새로운 응답 추가
       const newMessages = JSON.parse(messages_redis);
-      newMessages.push({ role: 'user', content: gpt_message });
+      newMessages.push({ role: 'assistant', content: gpt_message });
 
       // GPT 응답상태에 메시지 넣기
       await this.client.set(`${user_id}-response`, gpt_message, 'EX', 600);
@@ -168,7 +168,7 @@ export class AppService {
     }
 
     try {
-      const messages = await this.updateMessage(user_id, content);
+      const messages = await this.updateUserMessage(user_id, content);
       await Promise.race([
         this.runGpt(messages, user_id),
         new Promise((resolve, reject) =>
@@ -177,6 +177,7 @@ export class AppService {
       ]);
       const gpt_message = await this.client.get(`${user_id}-response`);
       console.log('-------gpt messages--------');
+      await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
       await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
       return this.kakao_response_text(gpt_message);
     } catch (error) {
