@@ -80,7 +80,6 @@ export class AppService {
         `${user_id}-messages`,
         JSON.stringify(parseMessage),
       );
-      console.log(parseMessage);
       return parseMessage;
     } catch (e) {
       console.log('update message error');
@@ -118,10 +117,10 @@ export class AppService {
       newMessages.push({ role: 'user', content: gpt_message });
 
       // GPT 응답상태에 메시지 넣기
-      this.client.set(`${user_id}-response`, gpt_message);
+      await this.client.set(`${user_id}-response`, gpt_message);
 
       // 기존 메시지에 새로운 메시지 넣기
-      this.client.set(`${user_id}-messages`, JSON.stringify(newMessages));
+      await this.client.set(`${user_id}-messages`, JSON.stringify(newMessages));
     } catch (e) {
       console.log('run gpt error');
       console.log(e);
@@ -136,7 +135,7 @@ export class AppService {
       // 유저 응답 상태 없으면 초기화
       if (!userInfo) {
         console.log('none user init');
-        this.client.set(`${user_id}-response`, 'INIT');
+        await this.client.set(`${user_id}-response`, 'INIT');
 
         // GPT 시스템 셋팅
         console.log('system message setting');
@@ -146,7 +145,7 @@ export class AppService {
       // 유저 응답 설정
       const messages = await this.updateMessage(user_id, content);
 
-      this.runGpt(messages, user_id);
+      await this.runGpt(messages, user_id);
 
       const user_response = await this.client.get(`${user_id}-response`);
       console.log('---------user response------');
@@ -158,8 +157,7 @@ export class AppService {
       } else {
         const gpt_message = await this.client.get(`${user_id}-response`);
         console.log('-------gpt messages--------');
-        console.log(gpt_message);
-        this.client.set(`${user_id}-response`, 'INIT');
+        await this.client.set(`${user_id}-response`, 'INIT');
         return this.kakao_response_text(gpt_message);
       }
     } catch (e) {
