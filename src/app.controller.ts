@@ -15,6 +15,7 @@ export class AppController {
   chatGpt(@Body() body, @Res() res: Response) {
     const user_id = body.userRequest.user.id;
     const msg = body.userRequest.utterance.replace('\n', '');
+    console.log(msg);
     return this.appService.createAnwser(msg, user_id);
   }
 }
