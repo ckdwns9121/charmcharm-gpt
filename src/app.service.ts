@@ -52,8 +52,19 @@ export class AppService {
         presence_penalty: 0,
       });
       const prompt = response.choices[0].message.content;
-      console.log(prompt);
-      return prompt;
+      const res = {
+        version: '2.0',
+        template: {
+          outputs: [
+            {
+              simpleText: {
+                text: prompt,
+              },
+            },
+          ],
+        },
+      };
+      return res;
     } catch (e) {
       console.log('error');
       console.log(e);
