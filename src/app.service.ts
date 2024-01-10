@@ -95,7 +95,7 @@ export class AppService {
 
       // 유저의 응답 상태 RUNNING
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo-1106',
+        model: 'gpt-4',
         messages: messages,
         temperature: 1,
         max_tokens: NUM_MAX_TOKEN,
