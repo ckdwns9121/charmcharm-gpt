@@ -173,7 +173,7 @@ export class AppService {
       await Promise.race([
         this.runGpt(messages, user_id),
         new Promise((resolve, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 4500),
+          setTimeout(() => reject(new Error('timeout')), 4900),
         ),
       ]);
       const gpt_message = await this.client.get(`${user_id}-response`);
