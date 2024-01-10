@@ -64,6 +64,8 @@ export class AppService {
     await this.client.set(
       `${user_id}-messages`,
       JSON.stringify(system_prompts),
+      'EX',
+      600,
     );
   }
 
@@ -113,22 +115,19 @@ export class AppService {
       newMessages.push({ role: 'user', content: gpt_message });
 
       // GPT 응답상태에 메시지 넣기
-      await this.client.set(`${user_id}-response`, gpt_message);
+      await this.client.set(`${user_id}-response`, gpt_message, 'EX', 600);
 
       // 기존 메시지에 새로운 메시지 넣기
-      await this.client.set(`${user_id}-messages`, JSON.stringify(newMessages));
+      await this.client.set(
+        `${user_id}-messages`,
+        JSON.stringify(newMessages),
+        'EX',
+        600,
+      );
     } catch (e) {
       console.log('run gpt error');
       console.log(e);
     }
-  }
-
-  async asyncFunction() {
-    // 여기에 비동기 작업을 구현하세요.
-  }
-
-  timeoutPromise(timeout) {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
   }
 
   async getResponse(): Promise<string> {
@@ -151,7 +150,7 @@ export class AppService {
     // 유저 응답 상태 없으면 초기화
     if (!userInfo) {
       console.log('none user init');
-      await this.client.set(`${user_id}-response`, 'INIT');
+      await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
 
       // GPT 시스템 셋팅
       console.log('system message setting');
@@ -178,7 +177,7 @@ export class AppService {
       ]);
       const gpt_message = await this.client.get(`${user_id}-response`);
       console.log('-------gpt messages--------');
-      await this.client.set(`${user_id}-response`, 'INIT');
+      await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
       return this.kakao_response_text(gpt_message);
     } catch (error) {
       return this.kakao_response_button();
