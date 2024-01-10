@@ -145,7 +145,7 @@ export class AppService {
       // 유저 응답 설정
       const messages = await this.updateMessage(user_id, content);
 
-      await this.runGpt(messages, user_id);
+      this.runGpt(messages, user_id);
 
       const user_response = await this.client.get(`${user_id}-response`);
       console.log('---------user response------');
