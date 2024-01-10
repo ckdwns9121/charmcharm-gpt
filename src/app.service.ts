@@ -91,10 +91,6 @@ export class AppService {
     try {
       let gpt_message = null;
 
-      const user_state = await this.client.get(`${user_id}-response`);
-      if (user_state === 'INIT') {
-        await this.client.set(`${user_id}-response`, 'RUNNING');
-      }
       // 유저의 응답 상태 RUNNING
       const response = await this.openai.chat.completions.create({
         model: 'gpt-3.5-turbo-1106',
@@ -145,6 +141,11 @@ export class AppService {
       // 유저 응답 설정
       const messages = await this.updateMessage(user_id, content);
 
+      const user_state = await this.client.get(`${user_id}-response`);
+      if (user_state === 'INIT') {
+        console.log('start running');
+        await this.client.set(`${user_id}-response`, 'RUNNING');
+      }
       this.runGpt(messages, user_id);
 
       const user_response = await this.client.get(`${user_id}-response`);
