@@ -128,7 +128,7 @@ export class AppService {
     }
   }
 
-  async createAnwser(content: string, user_id: string) {
+  createAnwser(content: string, user_id: string) {
     const responseBody = {
       version: '2.0',
       template: {
