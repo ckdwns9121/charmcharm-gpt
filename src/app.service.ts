@@ -57,7 +57,7 @@ export class AppService {
       {
         role: 'system',
         content:
-          '너는 다이어트식단 전문가야.\n\n사용자의 성별과 나이, 키를 입력받으면 그에 신체 스펙에 관련된 식단을 알려줘.\n\n만약 사용자의 성별, 나이, 키를 모른다면 아래와 같이 유저에게 정보를 물어봐줘\n1. 성별:\n2. 나이: \n3. 키: 그리고 너는 모든 답변을 요약해서 보내줘 ',
+          "You are an expert on diet.\n\nWhen you receive the user's gender, age, and height, let me know the diet related to the body specification.\n\n If you don't know the user's gender, age, and height, ask the user for information as below\n1. Gender:\n2. Age: \n3. Key: And you translate all the answers into Korean and answer them",
       },
     ];
 
@@ -95,7 +95,7 @@ export class AppService {
 
       // 유저의 응답 상태 RUNNING
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-3.5-turbo',
         messages: messages,
         temperature: 1,
         max_tokens: NUM_MAX_TOKEN,
