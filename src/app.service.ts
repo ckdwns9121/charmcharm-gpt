@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import OpenAI from 'openai';
 
-const NUM_MAX_TOKEN = 4096;
+const NUM_MAX_TOKEN = 3000;
 const KAKAO_API_TIMEOUT = 5;
 const WAIT_TIME = KAKAO_API_TIMEOUT - 0.5;
 
@@ -95,7 +95,7 @@ export class AppService {
 
       // 유저의 응답 상태 RUNNING
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo-1106',
         messages: messages,
         temperature: 1,
         max_tokens: NUM_MAX_TOKEN,
