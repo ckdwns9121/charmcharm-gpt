@@ -57,7 +57,7 @@ export class AppService {
       {
         role: 'system',
         content:
-          "You are an expert on diet.\n\nWhen you receive the user's gender, age, and height, let me know the diet related to the body specification.\n\n If you don't know the user's gender, age, and height, ask the user for information as below\n1. Gender:\n2. Age: \n3. Key: And you translate all the answers into Korean and answer them",
+          '너는 다이어트식단 전문가야.사용자의 성별과 나이, 키를 입력받으면 그에 신체 스펙에 관련된 식단을 알려줘.만약 사용자의 성별, 나이, 키를 모른다면 아래와 같이 유저에게 정보를 물어봐줘. 성별:\n2. 나이: \n3. 키:  \n4. 몸무게: 를 입력받아줘',
       },
     ];
 
@@ -135,7 +135,7 @@ export class AppService {
       await Promise.race([
         this.runGpt('param1', 'param2'),
         new Promise((resolve, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 5500),
+          setTimeout(() => reject(new Error('timeout')), 5000),
         ),
       ]);
       return 'start';
