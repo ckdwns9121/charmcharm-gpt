@@ -95,7 +95,7 @@ export class AppService {
 
       // 유저의 응답 상태 RUNNING
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4-1106-preview',
+        model: 'gpt-4',
         messages: messages,
         temperature: 1,
         max_tokens: NUM_MAX_TOKEN,
@@ -135,7 +135,7 @@ export class AppService {
       await Promise.race([
         this.runGpt('param1', 'param2'),
         new Promise((resolve, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 5000),
+          setTimeout(() => reject(new Error('timeout')), 5500),
         ),
       ]);
       return 'start';
