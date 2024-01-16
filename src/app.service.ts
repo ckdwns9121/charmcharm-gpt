@@ -178,6 +178,19 @@ export class AppService {
   }
 
   async createAnwser(content: string, user_id: string) {
+    return {
+      version: '2.0',
+      template: {
+        outputs: [{ simpleText: { text: '답변을 준비하고 있습니다.' } }],
+        quickReplies: [
+          {
+            messageText: '답변 확인 하기 테스트',
+            action: 'message',
+            label: '답변 확인 하기',
+          },
+        ],
+      },
+    };
     // 유저 응답 상태 가져오기
     const userInfo = await this.client.get(`${user_id}-response`);
 
