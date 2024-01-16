@@ -139,10 +139,16 @@ export class AppService {
       const newMessages = JSON.parse(messages_redis);
       newMessages.push({ role: 'assistant', content: gpt_message });
 
+      console.log('--------gpt message create-------');
+      console.log(gpt_message);
+
       // GPT 응답상태에 메시지 넣기
       await this.client.set(`${user_id}-response`, gpt_message, 'EX', 600);
 
       // 기존 메시지에 새로운 메시지 넣기
+
+      console.log('--------gpt message set redis-------');
+      console.log(newMessages);
       await this.client.set(
         `${user_id}-messages`,
         JSON.stringify(newMessages),
