@@ -183,6 +183,8 @@ export class AppService {
     }
     if (content === '답변 확인 하기') {
       const state = await this.client.get(`${user_id}-response`);
+      console.log('---------state-------');
+      console.log(state);
       if (state === 'RUNNING') {
         return this.kakao_response_button();
       } else if (state === 'INIT') {
@@ -204,7 +206,6 @@ export class AppService {
       ]);
       const gpt_message = await this.client.get(`${user_id}-response`);
       console.log('-------gpt messages--------');
-      await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
       await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
       return this.kakao_response_text(gpt_message);
     } catch (error) {
