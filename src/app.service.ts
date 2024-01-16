@@ -38,8 +38,9 @@ export class AppService {
           },
         },
       );
+      console.log(response.data);
 
-      return response.data.translations.text;
+      return response.data.translations[0].text;
     } catch (error) {
       console.log(error);
     }
