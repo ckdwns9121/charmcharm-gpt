@@ -196,7 +196,8 @@ export class AppService {
 
     try {
       const transformText = await this.deeplTransform(content);
-
+      console.log('------transform text------');
+      console.log(transformText);
       const messages = await this.updateUserMessage(user_id, transformText);
       await Promise.race([
         this.runGpt(messages, user_id),
