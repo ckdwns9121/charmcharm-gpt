@@ -47,6 +47,8 @@ export class AppService {
   }
 
   kakao_response_text(text: string) {
+    console.log('create kakao message');
+    console.log(text);
     return {
       version: '2.0',
       template: {
@@ -216,6 +218,7 @@ export class AppService {
       console.log('-------gpt messages--------');
       console.log(gpt_message);
       await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
+
       return this.kakao_response_text(gpt_message);
     } catch (error) {
       return this.kakao_response_button();
