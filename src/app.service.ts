@@ -39,7 +39,7 @@ export class AppService {
         },
       );
 
-      return response.data.text;
+      return response.data.translations.text;
     } catch (error) {
       console.log(error);
     }
