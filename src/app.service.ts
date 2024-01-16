@@ -38,9 +38,8 @@ export class AppService {
           },
         },
       );
-      console.log(response);
 
-      return response.data;
+      return response.data.text;
     } catch (error) {
       console.log(error);
     }
