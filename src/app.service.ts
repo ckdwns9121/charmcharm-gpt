@@ -64,6 +64,7 @@ export class AppService {
   }
 
   kakao_response_button() {
+    console.log('-----quick replies-------');
     return {
       version: '2.0',
       template: {
