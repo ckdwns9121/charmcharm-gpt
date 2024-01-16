@@ -221,6 +221,7 @@ export class AppService {
 
       return this.kakao_response_text(gpt_message);
     } catch (error) {
+      console.log('------timeout error------');
       return this.kakao_response_button();
     }
   }
