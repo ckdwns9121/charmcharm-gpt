@@ -25,6 +25,8 @@
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "axios": "^1.6.5",
+    "deepl": "^1.0.13",
     "ioredis": "^5.3.2",
     "openai": "^4.24.2",
     "reflect-metadata": "^0.1.13",
