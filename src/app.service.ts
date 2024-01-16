@@ -208,6 +208,7 @@ export class AppService {
       ]);
       const gpt_message = await this.client.get(`${user_id}-response`);
       console.log('-------gpt messages--------');
+      console.log(gpt_message);
       await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
       return this.kakao_response_text(gpt_message);
     } catch (error) {
