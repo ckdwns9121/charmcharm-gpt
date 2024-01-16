@@ -12,4 +12,11 @@ export class AppController {
     console.log(msg);
     return this.appService.createAnwser(msg, user_id);
   }
+
+  @Post('/translate')
+  async translate(@Body() body) {
+    const text = body.text;
+    const translateText = await this.appService.deeplTransform(text);
+    return translateText;
+  }
 }

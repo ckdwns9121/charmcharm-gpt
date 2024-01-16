@@ -32,7 +32,7 @@ export class AppService {
         `https://api-free.deepl.com/v2/translate`,
         {
           params: {
-            auth_key: '58b18fd9-6734-078f-4268-93dea3ee72be:fx',
+            auth_key: this.configService.get('DEEPL_API_KEY'),
             text: text,
             target_lang: targetLanguage,
           },
