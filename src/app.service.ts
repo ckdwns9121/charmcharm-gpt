@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import OpenAI from 'openai';
+import axios from 'axios';
 
 const NUM_MAX_TOKEN = 4096;
 const KAKAO_API_TIMEOUT = 5;
@@ -11,6 +12,8 @@ const WAIT_TIME = KAKAO_API_TIMEOUT - 0.5;
 @Injectable()
 export class AppService {
   private readonly openai: OpenAI;
+
+  private readonly transrator: any;
   constructor(
     @InjectRedis()
     private readonly client: Redis,
@@ -21,7 +24,31 @@ export class AppService {
     });
   }
 
+  async deeplTransform(text: string) {
+    const targetLanguage = 'EN-US';
+
+    try {
+      const response = await axios.get(
+        `https://api-free.deepl.com/v2/translate`,
+        {
+          params: {
+            auth_key: this.configService.get('DEEPL_API_KEY'),
+            text: text,
+            target_lang: targetLanguage,
+          },
+        },
+      );
+      console.log(response.data);
+
+      return response.data.translations[0].text;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   kakao_response_text(text: string) {
+    console.log('create kakao message');
+    console.log(text);
     return {
       version: '2.0',
       template: {
@@ -37,6 +64,7 @@ export class AppService {
   }
 
   kakao_response_button() {
+    console.log('-----quick replies-------');
     return {
       version: '2.0',
       template: {
@@ -57,7 +85,7 @@ export class AppService {
       {
         role: 'system',
         content:
-          '너는 다이어트식단 전문가야.사용자의 성별과 나이, 키를 입력받으면 그에 신체 스펙에 관련된 식단을 알려줘.만약 사용자의 성별, 나이, 키를 모른다면 아래와 같이 유저에게 정보를 물어봐줘. 성별:\n2. 나이: \n3. 키:  \n4. 몸무게: 를 입력받아줘',
+          "You're a diet expert, and you're given a user's gender, age, and height, and you're asked to suggest a diet for that person based on their body specifications. Gender: \n2. Age: \n3. Height: \n4. Weight: Please answer in Korean.",
       },
     ];
 
@@ -114,10 +142,16 @@ export class AppService {
       const newMessages = JSON.parse(messages_redis);
       newMessages.push({ role: 'assistant', content: gpt_message });
 
+      console.log('--------gpt message create-------');
+      console.log(gpt_message);
+
       // GPT 응답상태에 메시지 넣기
       await this.client.set(`${user_id}-response`, gpt_message, 'EX', 600);
 
       // 기존 메시지에 새로운 메시지 넣기
+
+      console.log('--------gpt message set redis-------');
+      console.log(newMessages);
       await this.client.set(
         `${user_id}-messages`,
         JSON.stringify(newMessages),
@@ -143,6 +177,7 @@ export class AppService {
       return 'end';
     }
   }
+
   async createAnwser(content: string, user_id: string) {
     // 유저 응답 상태 가져오기
     const userInfo = await this.client.get(`${user_id}-response`);
@@ -159,6 +194,8 @@ export class AppService {
 
     if (content === '답변 확인 하기') {
       const state = await this.client.get(`${user_id}-response`);
+      console.log('---------state-------');
+      console.log(state);
       if (state === 'RUNNING') {
         return this.kakao_response_button();
       } else if (state === 'INIT') {
@@ -169,24 +206,25 @@ export class AppService {
     }
 
     try {
-      const messages = await this.updateUserMessage(user_id, content);
+      const transformText = await this.deeplTransform(content);
+      console.log('------transform text------');
+      console.log(transformText);
+      const messages = await this.updateUserMessage(user_id, transformText);
       await Promise.race([
         this.runGpt(messages, user_id),
         new Promise((resolve, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 4900),
+          setTimeout(() => reject(new Error('timeout')), 4000),
         ),
       ]);
       const gpt_message = await this.client.get(`${user_id}-response`);
       console.log('-------gpt messages--------');
+      console.log(gpt_message);
       await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
-      await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
+
       return this.kakao_response_text(gpt_message);
     } catch (error) {
-      return this.kakao_response_text('에러발새앵!!!!!!');
+      console.log('------timeout error------');
+      return this.kakao_response_button();
     }
-  }
-
-  getHello(): string {
-    return 'Hello World!';
   }
 }
