@@ -52,7 +52,7 @@ export class AppService {
     };
   }
 
-  async initUserMessage(user_id) {
+  async initSystemMessage(user_id) {
     const system_prompts = [
       {
         role: 'system',
@@ -152,10 +152,11 @@ export class AppService {
       console.log('none user init');
       await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
 
-      // GPT 시스템 셋팅
+      // GPT 시스템 메시지 셋팅
       console.log('system message setting');
-      await this.initUserMessage(user_id);
+      await this.initSystemMessage(user_id);
     }
+
     if (content === '답변 확인 하기') {
       const state = await this.client.get(`${user_id}-response`);
       if (state === 'RUNNING') {
@@ -181,7 +182,7 @@ export class AppService {
       await this.client.set(`${user_id}-response`, 'INIT', 'EX', 600);
       return this.kakao_response_text(gpt_message);
     } catch (error) {
-      return this.kakao_response_button();
+      return this.kakao_response_text('에러발새앵!!!!!!');
     }
   }
 
