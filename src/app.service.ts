@@ -85,7 +85,7 @@ export class AppService {
       {
         role: 'system',
         content:
-          "You're a diet expert, and you're given a user's gender, age, and height, and you're asked to suggest a diet for that person based on their body specifications. Gender: \n2. Age: \n3. Height: \n4. Weight: Please answer in Korean.",
+          '너는 다이어트 식단 전문가야. 너는 사용자에게 사용자의 신체에 맞춰 식단을 짜주면 돼. 사용자의 신체정보를 모르겠으면 1.나이\n 2.키\n 3. 성별\n. 4.몸무게\n 를 알려달라고 요청해.',
       },
     ];
 
@@ -163,20 +163,6 @@ export class AppService {
     }
   }
 
-  async getResponse(): Promise<string> {
-    try {
-      await Promise.race([
-        this.runGpt('param1', 'param2'),
-        new Promise((resolve, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 5000),
-        ),
-      ]);
-      return 'start';
-    } catch (error) {
-      return 'end';
-    }
-  }
-
   async createAnwser(content: string, user_id: string) {
     // 유저 응답 상태 가져오기
     const userInfo = await this.client.get(`${user_id}-response`);
@@ -207,10 +193,10 @@ export class AppService {
     }
 
     try {
-      const transformText = await this.deeplTransform(content);
-      console.log('------transform text------');
-      console.log(transformText);
-      const messages = await this.updateUserMessage(user_id, transformText);
+      // const transformText = await this.deeplTransform(content);
+      // console.log('------transform text------');
+      // console.log(transformText);
+      const messages = await this.updateUserMessage(user_id, content);
       await Promise.race([
         this.runGpt(messages, user_id),
         new Promise((resolve, reject) =>
