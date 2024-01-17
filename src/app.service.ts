@@ -151,7 +151,6 @@ export class AppService {
       // 기존 메시지에 새로운 메시지 넣기
 
       console.log('--------gpt message set redis-------');
-      console.log(newMessages);
       await this.client.set(
         `${user_id}-messages`,
         JSON.stringify(newMessages),
@@ -194,8 +193,10 @@ export class AppService {
 
     if (content === '답변 확인 하기') {
       const state = await this.client.get(`${user_id}-response`);
-      console.log('---------state-------');
+      console.log('---------start state-------');
       console.log(state);
+      console.log('---------end state-------');
+
       if (state === 'RUNNING') {
         return this.kakao_response_button();
       } else if (state === 'INIT') {
